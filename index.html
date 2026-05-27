@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- GSAP para animações cinematográficas de alta performance -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- Tone.js para sintetizar músicas ambientais suaves -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- YouTube Player API para reproduzir o vídeo fornecido em segundo plano -->
+    <script src="https://www.youtube.com/iframe_api"></script>
 
     <style>
         :root {
@@ -42,6 +42,7 @@
                 radial-gradient(circle at 10% 20%, rgba(184, 147, 90, 0.05) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(34, 60, 42, 0.04) 0%, transparent 50%);
             box-shadow: inset 0 0 100px rgba(184, 147, 90, 0.15), 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         /* Fontes específicas aplicadas */
@@ -101,6 +102,15 @@
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-40">
         <div id="particle-container" class="w-full h-full relative"></div>
     </div>
+
+    <!-- Elemento invisível do YouTube Player que toca o vídeo l3bQqKyuKjQ (Tentei te Esquecer) -->
+    <div id="yt-player" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; left: -100px; top: -100px;"></div>
+
+    <!-- ÁUDIO DO CONVITE RESERVA (Caso a API do YouTube falhe) -->
+    <audio id="musica-casamento" loop preload="auto">
+        <source src="musica.mp3" type="audio/mpeg">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- CONTROLES FLUTUANTES DA MÚSICA & REPLAY (Aparecem após abrir) -->
     <div id="floating-controls" class="fixed top-4 right-4 z-50 flex gap-2 opacity-0 pointer-events-none transition-all duration-500">
@@ -179,7 +189,7 @@
                 <circle cx="165" cy="190" r="2.5" fill="#B8935A"/>
                 <!-- Lírio Laranja Principal (Top Left) -->
                 <g transform="translate(90, 160) scale(1.1)">
-                    <!-- Pétalas de fundo -->
+                    <!-- Pétatas de fundo -->
                     <path d="M0 0 C-40 -10 -60 -60 -30 -80 C-10 -90 10 -40 0 0 Z" fill="#D35F26"/>
                     <path d="M0 0 C30 -20 60 -50 70 -20 C80 10 30 20 0 0 Z" fill="#E47B3C"/>
                     <path d="M0 0 C40 20 50 70 20 80 C-10 90 -10 40 0 0 Z" fill="#C5501B"/>
@@ -264,16 +274,16 @@
             </div>
 
             <!-- NOMES DOS NOIVOS (Foco Visual Principal) -->
-            <div id="text-names" class="text-center my-6 relative py-4 opacity-0 scale-95">
-                <div class="relative">
+            <div id="text-names" class="text-center my-6 relative py-4 opacity-0 scale-95 w-full">
+                <div class="relative flex flex-col items-center justify-center">
                     <h1 class="font-playfair italic text-5xl sm:text-6xl md:text-7xl font-light text-[#203a27] tracking-wide leading-tight">Fernanda</h1>
                     
-                    <!-- O Conector "e" elegantemente disposto -->
-                    <div class="my-1 flex justify-center items-center">
-                        <span class="font-cursive text-4xl text-[#B8935A] -translate-x-12 sm:-translate-x-16 italic font-light">e</span>
+                    <!-- O Conector "&" elegantemente disposto e centralizado -->
+                    <div class="my-2 flex justify-center items-center">
+                        <span class="font-cursive text-5xl sm:text-6xl text-[#B8935A] italic font-light">&</span>
                     </div>
 
-                    <h1 class="font-playfair italic text-5xl sm:text-6xl md:text-7xl font-light text-[#203a27] tracking-wide leading-tight translate-x-4">Roberto</h1>
+                    <h1 class="font-playfair italic text-5xl sm:text-6xl md:text-7xl font-light text-[#203a27] tracking-wide leading-tight">Roberto</h1>
                 </div>
 
                 <!-- Pequeno Coração Sólido Separador -->
@@ -328,7 +338,7 @@
                     </div>
                     <p class="font-playfair text-sm sm:text-base text-[#203a27] font-bold">PARÓQUIA NOSSA SENHORA DA CONCEIÇÃO</p>
                     <p class="font-cinzel text-[10px] sm:text-xs tracking-widest text-[#55432a]">ALM. TAMANDARÉ</p>
-                    <p class="font-montserrat text-[11px] text-[#555] tracking-wide">Rua Bertolina Kendriok de Oliveira, 1222</p>
+                    <p class="font-montserrat text-[11px] text-[#555] tracking-wide">Rua Bertolina Kendrick de Oliveira, 1222</p>
                     <div class="inline-flex items-center gap-1 text-[10px] text-[#B8935A] mt-1 opacity-0 group-hover:opacity-100 transition-all">
                         <i class="fa-solid fa-location-dot"></i> Ver no Mapa
                     </div>
@@ -347,7 +357,8 @@
                         <h4 class="font-cinzel text-xs sm:text-sm tracking-[0.2em] text-[#B8935A] font-semibold">RECEPÇÃO</h4>
                     </div>
                     <p class="font-playfair text-sm sm:text-base text-[#203a27] font-bold">ASSEMAT</p>
-                    <p class="font-montserrat text-[11px] text-[#555] tracking-wide">Rua Jose Carlos Colodel, 108</p>
+                    <p class="font-montserrat text-[11px] text-[#555] tracking-wide">Rua José Carlos Colodel, 108 - Vila Santa Terezinha</p>
+                    <p class="font-cinzel text-[10px] text-amber-700 font-semibold tracking-widest uppercase mt-1">Jantar por Adesão</p>
                     <div class="inline-flex items-center gap-1 text-[10px] text-[#B8935A] mt-1 opacity-0 group-hover:opacity-100 transition-all">
                         <i class="fa-solid fa-location-dot"></i> Ver no Mapa
                     </div>
@@ -452,7 +463,7 @@
                     <p id="admin-login-error" class="text-red-600 text-xs text-center mt-2 hidden">Senha incorreta. Tente novamente.</p>
                 </div>
                 <button onclick="verifyAdminPasscode()" class="w-full font-cinzel bg-[#203a27] text-[#FAF6EE] text-xs tracking-[0.2em] py-3 rounded-full hover:bg-emerald-900 shadow transition duration-300">
-                    Entrar no Painel
+                    Entrar no Panel
                 </button>
             </div>
         </div>
@@ -767,7 +778,6 @@
 
         // Excluir Entrada do RSVP (Muito útil para testes dos noivos)
         async function deleteRsvpEntry(id) {
-            // Confirmamos usando uma modal estilizada ou simples popup toast
             if (isFirebaseReady) {
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'rsvps', id);
@@ -800,12 +810,12 @@
                     const acomp = parseInt(rsvp.companions) || 0;
                     simList += `- ${rsvp.name} ${acomp > 0 ? `(+${acomp} acompanhante${acomp > 1 ? 's' : ''})` : ''}\n`;
                     if (rsvp.message) {
-                        simList += `  └ Mensagem: "${rsvp.message}"\n`;
+                        simList += `   └ Mensagem: "${rsvp.message}"\n`;
                     }
                 } else {
                     naoList += `- ${rsvp.name}\n`;
                     if (rsvp.message) {
-                        naoList += `  └ Mensagem: "${rsvp.message}"\n`;
+                        naoList += `   └ Mensagem: "${rsvp.message}"\n`;
                     }
                 }
             });
@@ -867,71 +877,99 @@
 
     <!-- COMPORTAMENTOS INTERATIVOS E AUDIO-MÚSICA DO CONVITE -->
     <script>
-        // Configurações do Áudio em tempo real com Tone.js (Sinfonia de Harpa e Piano)
-        let audioStarted = false;
-        let isMuted = false;
-        let melodyLoop;
+        let musicaTocando = false;
+        let ytPlayerReady = false;
+        let ytPlayer = null;
+        const playerAudioFallback = document.getElementById('musica-casamento');
+        const soundIcon = document.getElementById('sound-icon');
 
-        // Função para criar sintetizador de Harpa/Piano para uma melodia de casamento requintada
-        function playWeddingMelody() {
-            if (audioStarted) return;
-            audioStarted = true;
-
-            // Criando efeitos de estúdio de alta qualidade
-            const reverb = new Tone.Reverb({ decay: 5, wet: 0.5 }).toDestination();
-            const delay = new Tone.FeedbackDelay("8n.", 0.3).connect(reverb);
-            
-            // Sintetizador com timbre suave de Harpa
-            const synth = new Tone.PolySynth(Tone.Synth, {
-                oscillator: { type: "triangle" },
-                envelope: {
-                    attack: 0.1,
-                    decay: 0.3,
-                    sustain: 0.6,
-                    release: 2.5
+        // Inicialização em Segundo Plano do Reprodutor de Vídeo YouTube API
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('yt-player', {
+                height: '1',
+                width: '1',
+                videoId: 'l3bQqKyuKjQ',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'l3bQqKyuKjQ', 
+                    'playsinline': 1,
+                    'rel': 0,
+                    'enablejsapi': 1
+                },
+                events: {
+                    'onReady': () => {
+                        ytPlayerReady = true;
+                    },
+                    'onStateChange': (event) => {
+                        if (event.data === YT.PlayerState.PLAYING) {
+                            musicaTocando = true;
+                            atualizarIconeMusica(true);
+                        } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                            musicaTocando = false;
+                            atualizarIconeMusica(false);
+                        }
+                    }
                 }
-            }).connect(delay);
-
-            synth.volume.value = -12; // Volume confortável de fundo
-
-            // Melodia clássica e romântica (Inspirada na progressão suave de Pachelbel)
-            const notes = [
-                ["F4", "A4", "C5", "E5"],
-                ["C4", "E4", "G4", "B4"],
-                ["A3", "C4", "E4", "G4"],
-                ["G3", "B3", "D4", "G4"]
-            ];
-
-            let step = 0;
-            melodyLoop = new Tone.Loop(time => {
-                const chordNotes = notes[step % notes.length];
-                
-                // Arpejo elegante subindo
-                chordNotes.forEach((note, idx) => {
-                    synth.triggerAttackRelease(note, "2n", time + idx * 0.15);
-                });
-
-                // Baixo suave acompanhando
-                const bassNote = chordNotes[0].replace(/3|4|5/, "2");
-                synth.triggerAttackRelease(bassNote, "1n", time);
-
-                step++;
-            }, "2m").start(0);
-
-            Tone.Transport.start();
+            });
         }
 
-        // Função para mutar/desmutar
-        document.getElementById('btn-sound').addEventListener('click', () => {
-            isMuted = !isMuted;
-            const soundIcon = document.getElementById('sound-icon');
-            if (isMuted) {
-                Tone.Destination.mute = true;
-                soundIcon.className = "fa-solid fa-volume-xmark";
+        // Inicia a música de fundo
+        function tocarMusica() {
+            if (ytPlayerReady && ytPlayer) {
+                ytPlayer.playVideo();
+                musicaTocando = true;
+                atualizarIconeMusica(true);
             } else {
-                Tone.Destination.mute = false;
-                soundIcon.className = "fa-solid fa-volume-high";
+                playerAudioFallback.play().then(() => {
+                    musicaTocando = true;
+                    atualizarIconeMusica(true);
+                }).catch(e => {
+                    console.log("Interação requerida pelo navegador para liberar música:", e);
+                });
             }
+        }
+
+        // Pausa ou retoma a música
+        function controlarMusica() {
+            if (ytPlayerReady && ytPlayer) {
+                const state = ytPlayer.getPlayerState();
+                if (state === YT.PlayerState.PLAYING) {
+                    ytPlayer.pauseVideo();
+                    musicaTocando = false;
+                    atualizarIconeMusica(false);
+                } else {
+                    ytPlayer.playVideo();
+                    musicaTocando = true;
+                    atualizarIconeMusica(true);
+                }
+            } else {
+                if (musicaTocando) {
+                    playerAudioFallback.pause();
+                    musicaTocando = false;
+                    atualizarIconeMusica(false);
+                } else {
+                    playerAudioFallback.play();
+                    musicaTocando = true;
+                    atualizarIconeMusica(true);
+                }
+            }
+        }
+
+        // Altera visualmente o botão flutuante de som
+        function atualizarIconeMusica(ativo) {
+            const soundIcon = document.getElementById('sound-icon');
+            if (ativo) {
+                soundIcon.className = "fa-solid fa-volume-high";
+            } else {
+                soundIcon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        // Controlar clique no botão de música
+        document.getElementById('btn-sound').addEventListener('click', () => {
+            controlarMusica();
         });
 
         // ORQUESTRAÇÃO DE ANIMAÇÃO COM GSAP (+12 segundos de revelações contínuas e refinadas)
@@ -1056,16 +1094,14 @@
 
         // Clique no Envelope para iniciar tudo
         document.getElementById('envelope').addEventListener('click', async () => {
-            // Toca a música e abre o envelope
-            await Tone.start();
-            playWeddingMelody();
+            tocarMusica();
 
             const flap = document.getElementById('envelope-flap');
             const seal = document.getElementById('wax-seal');
             
             // Giro tridimensional realista da aba do envelope e descida do selo
             gsap.to(seal, { opacity: 0, scale: 0.5, duration: 0.6, ease: "power2.in" });
-            gsap.to(flap, { rotateX: 180, duration: 1, transformOrigin: "top center", ease: "power2.inOut" });
+            gsap.to(flap, { rotateX: 180, transformOrigin: "top center", duration: 1, ease: "power2.inOut" });
             
             // Slide de saída do card do envelope e início de toda a mágica
             setTimeout(() => {
@@ -1176,9 +1212,9 @@
         function openMap(type) {
             let url = "";
             if (type === 'ceremony') {
-                url = "https://www.google.com/maps/search/?api=1&query=Paróquia+Nossa+Senhora+da+Conceição+Rua+Bertolina+Kendriok+de+Oliveira+1222+Almirante+Tamandaré";
+                url = "https://www.google.com/maps/search/?api=1&query=Paróquia+Nossa+Senhora+da+Conceição+Rua+Bertolina+Kendrick+de+Oliveira+1222+Almirante+Tamandaré";
             } else if (type === 'reception') {
-                url = "https://www.google.com/maps/search/?api=1&query=ASSEMAT+Rua+Jose+Carlos+Colodel+108+Almirante+Tamandaré";
+                url = "https://www.google.com/maps/search/?api=1&query=Rua+Jose+Carlos+Colodel,+108+-+Vila+Santa+Terezinha,+Almirante+Tamandare+-+PR,+83501-140";
             }
             window.open(url, '_blank');
         }
